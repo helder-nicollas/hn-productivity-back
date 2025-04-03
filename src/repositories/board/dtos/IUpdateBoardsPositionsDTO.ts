@@ -1,5 +1,5 @@
-import { IBoard } from '../../../models/types/IBoard';
+import { Board } from '@prisma/client';
 
 export interface IUpdateBoardsPositionsDTO {
-    boards: IBoard[];
+    boards: Board[];
 }

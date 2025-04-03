@@ -1,6 +1,7 @@
 import { IUserRepository } from '../types/user';
 import { ICreateUserDTO } from './dtos/ICreateUserDTO';
 import { database } from '../../database';
+import { IUpdateUserDTO } from './dtos/IUpdateUserDTO';
 
 export class UserRepository implements IUserRepository {
     public async create({ name, email, password }: ICreateUserDTO) {

@@ -1,8 +1,8 @@
-import { ITask } from '../../../models/types/ITask';
+import { Task } from '@prisma/client';
 
 export interface IUpdateTasksPositionsDTO {
     sourceSectionId: string;
     destinationSectionId: string;
-    sourceTasksList: ITask[];
-    destinationTasksList: ITask[];
+    sourceTasksList: Task[];
+    destinationTasksList: Task[];
 }

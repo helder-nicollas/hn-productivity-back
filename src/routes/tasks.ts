@@ -18,7 +18,7 @@ router.put('/:sectionId/tasks/:taskId', authMiddleware, (req, res) =>
     taskController.update(req, res),
 );
 router.delete('/:sectionId/tasks/:taskId', authMiddleware, (req, res) =>
-    taskController.deleteTask(req, res),
+    taskController.delete(req, res),
 );
 
 export default router;
