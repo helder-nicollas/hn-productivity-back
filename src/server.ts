@@ -19,6 +19,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //Routes
+
 app.use('/users', usersRouter);
 app.use('/boards', boardsRouter);
 app.use('/boards/:boardId/sections', sectionsRouter, tasksRouter);

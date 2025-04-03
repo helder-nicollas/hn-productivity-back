@@ -1,0 +1,43 @@
+networks:
+  hn-productivity-network:
+    driver: bridge
+    name: hn-productivity-network
+
+services:
+  api:
+    build: .
+    container_name: hn-productivity-api
+    env_file:
+      - .env
+    networks:
+      - hn-productivity-network
+
+  database:
+    container_name: hn-productivity-db
+    image: postgres
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - hn-productivity-network
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    depends_on:
+      - api
+
+  nginx:
+    image: nginx
+    container_name: hn-productivity-server
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    networks:
+      - hn-productivity-network
+    depends_on:
+      - api
+      - database
+  
+volumes:
+  postgres:
