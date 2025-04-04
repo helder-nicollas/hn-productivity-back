@@ -14,13 +14,13 @@ const sectionController = new SectionController(
     boardRepository,
 );
 
-router.post('/', authMiddleware, (req, res) =>
+router.post('/', authMiddleware(), (req, res) =>
     sectionController.create(req, res),
 );
-router.put('/:sectionId', authMiddleware, (req, res) =>
+router.put('/:sectionId', authMiddleware(), (req, res) =>
     sectionController.update(req, res),
 );
-router.delete('/:sectionId', authMiddleware, (req, res) =>
+router.delete('/:sectionId', authMiddleware(), (req, res) =>
     sectionController.delete(req, res),
 );
 

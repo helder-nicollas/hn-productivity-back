@@ -26,6 +26,16 @@ services:
     depends_on:
       - api
 
+  redis:
+    container_name: hn-productivity-redis
+    image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - hn-productivity-network
+    depends_on:
+      - api
+
   nginx:
     image: nginx
     container_name: hn-productivity-server

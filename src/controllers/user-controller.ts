@@ -1,13 +1,18 @@
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 import { BadRequestError } from '../helpers/api-errors';
 import { IUserRepository } from '../repositories/types/user';
+import { RedisType } from '../database';
+import { createToken } from '../helpers/jwt';
 
 export class UserController {
-    constructor(private repository: IUserRepository) {
+    constructor(
+        private repository: IUserRepository,
+        private redis: RedisType,
+    ) {
         this.repository = repository;
+        this.redis = redis;
     }
 
     public async register(req: Request, res: Response) {
@@ -15,7 +20,13 @@ export class UserController {
 
         const encrypted = await bcrypt.hash(password, 10);
 
-        await this.repository.create({ name, email, password: encrypted });
+        const user = await this.repository.create({
+            name,
+            email,
+            password: encrypted,
+        });
+
+        await this.redis.set(`user-${user.user_id}`, JSON.stringify(user));
         res.status(200).json({ message: 'User succesfully created!' });
     }
 
@@ -31,11 +42,8 @@ export class UserController {
         if (!isCorrectPassword)
             throw new BadRequestError('Incorrect Email or Password!');
 
-        const token = jwt.sign(
-            { id: user.user_id },
-            process.env.TOKEN_SECRET_KEY!,
-            { expiresIn: '24h' },
-        );
+        const token = createToken(user.user_id);
+        await this.redis.set(`user-${user.user_id}`, JSON.stringify(user));
 
         res.status(200).json({ user, token });
     }
