@@ -2,11 +2,13 @@ import { Router } from 'express';
 import { TaskController } from '../controllers/task-controller';
 import { TaskRepository } from '../repositories/task';
 import { authMiddleware } from '../middlewares/auth';
+import { BoardRepository } from '../repositories/board';
 
 const router = Router({ mergeParams: true });
 
 const taskRepository = new TaskRepository();
-const taskController = new TaskController(taskRepository);
+const boardRepository = new BoardRepository();
+const taskController = new TaskController(taskRepository, boardRepository);
 
 router.post('/:sectionId/tasks', authMiddleware, (req, res) =>
     taskController.create(req, res),

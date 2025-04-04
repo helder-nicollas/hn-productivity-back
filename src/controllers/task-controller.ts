@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
 import { ITaskRepository } from '../repositories/types/task';
+import { NotFoundError } from '../helpers/api-errors';
+import { IBoardRepostiory } from '../repositories/types/board';
 
 export class TaskController {
-    constructor(private repository: ITaskRepository) {
+    constructor(
+        private repository: ITaskRepository,
+        private boardRepository: IBoardRepostiory,
+    ) {
         this.repository = repository;
+        this.boardRepository = boardRepository;
     }
 
     public async create(req: Request, res: Response) {
@@ -16,7 +22,12 @@ export class TaskController {
 
     public async update(req: Request, res: Response) {
         const { title, content, color } = req.body;
-        const { taskId } = req.params;
+        const { taskId, boardId } = req.params;
+        const userId = req.user!.user_id;
+
+        const board = await this.boardRepository.findOne({ boardId, userId });
+
+        if (!board) throw new NotFoundError('Board not found!');
 
         const updatedTask = await this.repository.update({
             title,
@@ -29,7 +40,12 @@ export class TaskController {
     }
 
     public async delete(req: Request, res: Response) {
-        const { taskId, sectionId } = req.params;
+        const { taskId, sectionId, boardId } = req.params;
+        const userId = req.user!.user_id;
+
+        const board = await this.boardRepository.findOne({ boardId, userId });
+
+        if (!board) throw new NotFoundError('Board not found!');
 
         await this.repository.delete({ taskId, sectionId });
 

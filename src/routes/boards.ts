@@ -30,7 +30,7 @@ router.get('/:boardId', authMiddleware, (req, res) =>
     boardController.getOne(req, res),
 );
 router.delete('/:boardId', authMiddleware, (req, res) =>
-    boardController.deleteBoard(req, res),
+    boardController.delete(req, res),
 );
 
 export default router;

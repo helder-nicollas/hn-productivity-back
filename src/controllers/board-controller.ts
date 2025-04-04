@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { IBoardRepostiory } from '../repositories/types/board';
+import { NotFoundError } from '../helpers/api-errors';
 
 export class BoardController {
     constructor(private repository: IBoardRepostiory) {
@@ -29,12 +30,18 @@ export class BoardController {
         const userId = req.user!.user_id;
 
         const board = await this.repository.findOne({ userId, boardId });
+
+        if (!board) throw new NotFoundError('Board not found!');
         res.status(200).json(board);
     }
 
-    public async deleteBoard(req: Request, res: Response) {
+    public async delete(req: Request, res: Response) {
         const { boardId } = req.params;
         const userId = req.user!.user_id;
+
+        const board = await this.repository.findOne({ boardId, userId });
+
+        if (!board) throw new NotFoundError('Board not found!');
 
         await this.repository.delete({ boardId, userId });
         res.status(200).json({ message: 'Board sucessfully deleted' });
@@ -44,6 +51,10 @@ export class BoardController {
         const { title, description, favorite, icon } = req.body;
         const { boardId } = req.params;
         const userId = req.user!.user_id;
+
+        const board = await this.repository.findOne({ boardId, userId });
+
+        if (!board) throw new NotFoundError('Board not found!');
 
         const updatedBoard = await this.repository.update({
             title,
